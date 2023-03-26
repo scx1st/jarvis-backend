@@ -19,7 +19,7 @@ type k8s struct {
 	KubeConfMap map[string]string
 }
 
-//根据集群名获取client
+//GetClient 根据集群名获取client
 func (k *k8s) GetClient(cluster string) (*kubernetes.Clientset, error) {
 	client, ok := k.ClientMap[cluster]
 	if !ok {
@@ -28,7 +28,7 @@ func (k *k8s) GetClient(cluster string) (*kubernetes.Clientset, error) {
 	return client, nil
 }
 
-//初始化client
+//Init 初始化client
 func (k *k8s) Init() {
 	mp := make(map[string]string, 0)
 	k.ClientMap = make(map[string]*kubernetes.Clientset, 0)
