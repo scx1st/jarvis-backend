@@ -8,12 +8,12 @@ import (
 	"net/http"
 )
 
-var Pod pod
+var Deployment deployment
 
-type pod struct{}
+type deployment struct{}
 
-//GetPods 获取pod列表
-func (p *pod) GetPods(c *gin.Context) {
+//GetDeployments 获取Deployment列表
+func (d *deployment) GetDeployments(c *gin.Context) {
 	//1.接受参数，绑定参数
 	//匿名结构体，get请求为form格式，其他请求为json格式
 	params := new(struct {
@@ -26,7 +26,7 @@ func (p *pod) GetPods(c *gin.Context) {
 	//form格式使用c.Bind方法， json格式使用c.ShouldBindJSON方法
 	if err := c.Bind(params); err != nil {
 		logger.Error(fmt.Sprintf("绑定参数失败,%v\n", err))
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusBadGateway, gin.H{
 			"msg":  fmt.Sprintf("绑定参数失败,%v\n", err),
 			"data": nil,
 		})
@@ -41,7 +41,7 @@ func (p *pod) GetPods(c *gin.Context) {
 		return
 	}
 	//3.调用service方法，获取列表
-	data, err := service.Pod.GetPods(client, params.FilterName, params.Namespace, params.Limit, params.Page)
+	data, err := service.Deployment.GetDeployments(client, params.FilterName, params.Namespace, params.Limit, params.Page)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"msg":  err.Error(),
@@ -50,24 +50,24 @@ func (p *pod) GetPods(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"msg":  "获取pod列表成功",
+		"msg":  "获取Deployment列表成功",
 		"data": data,
 	})
 }
 
-//GetPodDetail 获取pod详情
-func (p *pod) GetPodDetail(c *gin.Context) {
+//GetDeploymentDetail 获取Deployment详情
+func (d *deployment) GetDeploymentDetail(c *gin.Context) {
 	//1.接受参数，绑定参数
 	//匿名结构体，get请求为form格式，其他请求为json格式
 	params := new(struct {
-		PodName   string `form:"pod_name"`
-		Namespace string `form:"namespace"`
-		Cluster   string `form:"cluster"`
+		DeploymentName string `form:"deployment_name"`
+		Namespace      string `form:"namespace"`
+		Cluster        string `form:"cluster"`
 	})
 	//form格式使用c.Bind方法， json格式使用c.ShouldBindJSON方法
 	if err := c.Bind(params); err != nil {
 		logger.Error(fmt.Sprintf("绑定参数失败,%v\n", err))
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusBadGateway, gin.H{
 			"msg":  fmt.Sprintf("绑定参数失败,%v\n", err),
 			"data": nil,
 		})
@@ -81,8 +81,8 @@ func (p *pod) GetPodDetail(c *gin.Context) {
 		})
 		return
 	}
-	//3.调用service方法，获取详情列表
-	data, err := service.Pod.GetPodDetail(client, params.PodName, params.Namespace)
+	//3.调用service方法，获取列表
+	data, err := service.Deployment.GetDeploymentDetail(client, params.DeploymentName, params.Namespace)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"msg":  err.Error(),
@@ -90,31 +90,32 @@ func (p *pod) GetPodDetail(c *gin.Context) {
 		})
 		return
 	}
-	//测试更新pod的使用
+	//测试更新Deployment使用
 	//byte, _ := json.Marshal(data)
+	//
 	//c.JSON(http.StatusOK, gin.H{
-	//	"msg":  "获取pod详情成功",
+	//	"msg":  "获取Deployment详情成功",
 	//	"data": string(byte),
 	//})
 	c.JSON(http.StatusOK, gin.H{
-		"msg":  "获取pod详情成功",
+		"msg":  "获取Deployment详情成功",
 		"data": data,
 	})
 }
 
-//DeletePod 删除pod
-func (p *pod) DeletePod(c *gin.Context) {
+//DeleteDeployment 删除Deployment
+func (d *deployment) DeleteDeployment(c *gin.Context) {
 	//1.接受参数，绑定参数
 	//匿名结构体，get请求为form格式，其他请求为json格式
 	params := new(struct {
-		PodName   string `json:"pod_name"`
-		Namespace string `json:"namespace"`
-		Cluster   string `json:"cluster"`
+		DeploymentName string `json:"deployment_name"`
+		Namespace      string `json:"namespace"`
+		Cluster        string `json:"cluster"`
 	})
 	//form格式使用c.Bind方法， json格式使用c.ShouldBindJSON方法
 	if err := c.ShouldBindJSON(params); err != nil {
 		logger.Error(fmt.Sprintf("绑定参数失败,%v\n", err))
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusBadGateway, gin.H{
 			"msg":  fmt.Sprintf("绑定参数失败,%v\n", err),
 			"data": nil,
 		})
@@ -128,8 +129,8 @@ func (p *pod) DeletePod(c *gin.Context) {
 		})
 		return
 	}
-	//3.调用service方法，删除pod
-	err = service.Pod.DeletePod(client, params.PodName, params.Namespace)
+	//3.调用service方法，获取列表
+	err = service.Deployment.DeleteDeployment(client, params.DeploymentName, params.Namespace)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"msg":  err.Error(),
@@ -138,24 +139,24 @@ func (p *pod) DeletePod(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"msg":  "删除pod成功",
+		"msg":  "删除Deployment成功",
 		"data": nil,
 	})
 }
 
-//UpdatePod 更新pod
-func (p *pod) UpdatePod(c *gin.Context) {
+//UpdateDeployment 更新Deployment
+func (d *deployment) UpdateDeployment(c *gin.Context) {
 	//1.接受参数，绑定参数
 	//匿名结构体，get请求为form格式，其他请求为json格式
 	params := new(struct {
-		Namespace string `json:"namespace"`
 		Content   string `json:"content"`
+		Namespace string `json:"namespace"`
 		Cluster   string `json:"cluster"`
 	})
 	//form格式使用c.Bind方法， json格式使用c.ShouldBindJSON方法
 	if err := c.ShouldBindJSON(params); err != nil {
 		logger.Error(fmt.Sprintf("绑定参数失败,%v\n", err))
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusBadGateway, gin.H{
 			"msg":  fmt.Sprintf("绑定参数失败,%v\n", err),
 			"data": nil,
 		})
@@ -169,8 +170,8 @@ func (p *pod) UpdatePod(c *gin.Context) {
 		})
 		return
 	}
-	//3.调用service方法，删除pod
-	err = service.Pod.UpdatePod(client, params.Namespace, params.Content)
+	//3.调用service方法，获取列表
+	err = service.Deployment.UpdateDeployment(client, params.Namespace, params.Content)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"msg":  err.Error(),
@@ -179,24 +180,25 @@ func (p *pod) UpdatePod(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"msg":  "更新pod成功",
+		"msg":  "更新Deployment成功",
 		"data": nil,
 	})
 }
 
-//GetPodContainer 获取pod容器
-func (p *pod) GetPodContainer(c *gin.Context) {
+//ScaleDeployment 调整Deployment副本数
+func (d *deployment) ScaleDeployment(c *gin.Context) {
 	//1.接受参数，绑定参数
 	//匿名结构体，get请求为form格式，其他请求为json格式
 	params := new(struct {
-		PodName   string `form:"pod_name"`
-		Namespace string `form:"namespace"`
-		Cluster   string `form:"cluster"`
+		DeploymentName string `json:"deployment_name"`
+		ScaleNum       int    `json:"scale_num"`
+		Namespace      string `json:"namespace"`
+		Cluster        string `json:"cluster"`
 	})
 	//form格式使用c.Bind方法， json格式使用c.ShouldBindJSON方法
-	if err := c.Bind(params); err != nil {
+	if err := c.ShouldBindJSON(params); err != nil {
 		logger.Error(fmt.Sprintf("绑定参数失败,%v\n", err))
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusBadGateway, gin.H{
 			"msg":  fmt.Sprintf("绑定参数失败,%v\n", err),
 			"data": nil,
 		})
@@ -210,8 +212,8 @@ func (p *pod) GetPodContainer(c *gin.Context) {
 		})
 		return
 	}
-	//3.调用service方法，删除pod
-	data, err := service.Pod.GetPodContainer(client, params.PodName, params.Namespace)
+	//3.调用service方法，获取列表
+	data, err := service.Deployment.ScaleDeployment(client, params.DeploymentName, params.Namespace, params.ScaleNum)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"msg":  err.Error(),
@@ -220,25 +222,24 @@ func (p *pod) GetPodContainer(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"msg":  "获取pod容器成功",
+		"msg":  "调整Deployment副本数成功",
 		"data": data,
 	})
 }
 
-//GetPodLog 获取pod容器日志
-func (p *pod) GetPodLog(c *gin.Context) {
+//RestartDeployment 重启Deployment
+func (d *deployment) RestartDeployment(c *gin.Context) {
 	//1.接受参数，绑定参数
 	//匿名结构体，get请求为form格式，其他请求为json格式
 	params := new(struct {
-		ContainerName string `form:"container_name"`
-		PodName       string `form:"pod_name"`
-		Namespace     string `form:"namespace"`
-		Cluster       string `form:"cluster"`
+		DeploymentName string `json:"deployment_name"`
+		Namespace      string `json:"namespace"`
+		Cluster        string `json:"cluster"`
 	})
 	//form格式使用c.Bind方法， json格式使用c.ShouldBindJSON方法
-	if err := c.Bind(params); err != nil {
+	if err := c.ShouldBindJSON(params); err != nil {
 		logger.Error(fmt.Sprintf("绑定参数失败,%v\n", err))
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusBadGateway, gin.H{
 			"msg":  fmt.Sprintf("绑定参数失败,%v\n", err),
 			"data": nil,
 		})
@@ -252,8 +253,8 @@ func (p *pod) GetPodLog(c *gin.Context) {
 		})
 		return
 	}
-	//3.调用service方法，删除pod
-	data, err := service.Pod.GetPodLog(client, params.ContainerName, params.PodName, params.Namespace)
+	//3.调用service方法，获取列表
+	err = service.Deployment.RestartDeployment(client, params.DeploymentName, params.Namespace)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"msg":  err.Error(),
@@ -262,7 +263,46 @@ func (p *pod) GetPodLog(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"msg":  "获取pod容器日志成功",
-		"data": data,
+		"msg":  "重启Deployment成功",
+		"data": nil,
+	})
+}
+
+//CreateDeployment 创建Deployment
+func (d *deployment) CreateDeployment(c *gin.Context) {
+	//1.接受参数，绑定参数
+	var (
+		deployCreate = new(service.DeployCreate)
+		err          error
+	)
+	//form格式使用c.Bind方法， json格式使用c.ShouldBindJSON方法
+	if err := c.ShouldBindJSON(deployCreate); err != nil {
+		logger.Error(fmt.Sprintf("绑定参数失败,%v\n", err))
+		c.JSON(http.StatusBadGateway, gin.H{
+			"msg":  fmt.Sprintf("绑定参数失败,%v\n", err),
+			"data": nil,
+		})
+	}
+	//2.获取client
+	client, err := service.K8s.GetClient(deployCreate.Cluster)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg":  err.Error(),
+			"data": nil,
+		})
+		return
+	}
+	//3.调用service方法，获取列表
+	err = service.Deployment.CreateDeployment(client, deployCreate)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg":  err.Error(),
+			"data": nil,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"msg":  "创建Deployment成功",
+		"data": nil,
 	})
 }

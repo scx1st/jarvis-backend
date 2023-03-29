@@ -19,10 +19,19 @@ func (*router) InitApiRouter(r *gin.Engine) {
 			"data": nil,
 		})
 	}).
+		//pod操作
 		GET("/api/k8s/pods", Pod.GetPods).
 		GET("/api/k8s/pod/detail", Pod.GetPodDetail).
 		DELETE("/api/k8s/pod/del", Pod.DeletePod).
 		PUT("/api/k8s/pod/update", Pod.UpdatePod).
 		GET("/api/k8s/pod/container", Pod.GetPodContainer).
-		GET("/api/k8s/pod/log", Pod.GetPodLog)
+		GET("/api/k8s/pod/log", Pod.GetPodLog).
+		//deployment操作
+		GET("/api/k8s/deployments", Deployment.GetDeployments).
+		GET("/api/k8s/deployment/detail", Deployment.GetDeploymentDetail).
+		DELETE("/api/k8s/deployment/del", Deployment.DeleteDeployment).
+		PUT("/api/k8s/deployment/update", Deployment.UpdateDeployment).
+		PUT("/api/k8s/deployment/scale", Deployment.ScaleDeployment).
+		PUT("/api/k8s/deployment/restart", Deployment.RestartDeployment).
+		POST("/api/k8s/deployment/create", Deployment.CreateDeployment)
 }
