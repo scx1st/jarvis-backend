@@ -33,5 +33,9 @@ func (*router) InitApiRouter(r *gin.Engine) {
 		PUT("/api/k8s/deployment/update", Deployment.UpdateDeployment).
 		PUT("/api/k8s/deployment/scale", Deployment.ScaleDeployment).
 		PUT("/api/k8s/deployment/restart", Deployment.RestartDeployment).
-		POST("/api/k8s/deployment/create", Deployment.CreateDeployment)
+		POST("/api/k8s/deployment/create", Deployment.CreateDeployment).
+		//service操作
+		POST("/api/k8s/service/create", Servicev1.CreateService).
+		//ingress操作
+		POST("/api/k8s/ingress/create", Ingress.CreateIngress)
 }
