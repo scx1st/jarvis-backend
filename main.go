@@ -6,6 +6,7 @@ import (
 	"github.com/wonderivan/logger"
 	"jarvis-backend/config"
 	"jarvis-backend/controller"
+	"jarvis-backend/db"
 	"jarvis-backend/service"
 	"net/http"
 	"os"
@@ -16,10 +17,16 @@ import (
 func main() {
 	//初始化gin对象
 	r := gin.Default()
+	//初始化数据库
+	db.Init()
 	//初始化 k8s client
 	service.K8s.Init()
 	// 初始化路由规则
 	controller.Router.InitApiRouter(r)
+	//启动task
+	go func() {
+		service.Event.WatchEventTask("Cluster-1")
+	}()
 	//gin server启动
 	srv := &http.Server{
 		Addr:    config.ListenAddr,
@@ -46,4 +53,8 @@ func main() {
 		logger.Fatal("Gin Server关闭异常：", err)
 	}
 	logger.Info("Gin Server退出成功")
+	//关闭db
+	if err := db.Close(); err != nil {
+		logger.Fatal("DB关闭异常：", err)
+	}
 }

@@ -37,5 +37,7 @@ func (*router) InitApiRouter(r *gin.Engine) {
 		//service操作
 		POST("/api/k8s/service/create", Servicev1.CreateService).
 		//ingress操作
-		POST("/api/k8s/ingress/create", Ingress.CreateIngress)
+		POST("/api/k8s/ingress/create", Ingress.CreateIngress).
+		//event操作
+		GET("/api/k8s/events", Event.GetList)
 }
