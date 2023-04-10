@@ -41,5 +41,16 @@ func (*router) InitApiRouter(r *gin.Engine) {
 		//event操作
 		GET("/api/k8s/events", Event.GetList).
 		//allres
-		GET("/api/k8s/allres", AllRes.GetAllNum)
+		GET("/api/k8s/allres", AllRes.GetAllNum).
+		//helm应用商店
+		GET("/api/helmstore/releases", HelmStore.ListReleases).
+		GET("/api/helmstore/release/detail", HelmStore.DetailRelease).
+		POST("/api/helmstore/release/install", HelmStore.InstallRelease).
+		DELETE("/api/helmstore/release/uninstall", HelmStore.UninstallRelease).
+		GET("/api/helmstore/charts", HelmStore.ListCharts).
+		POST("/api/helmstore/chart/add", HelmStore.AddChart).
+		PUT("/api/helmstore/chart/update", HelmStore.UpdateChart).
+		DELETE("/api/helmstore/chart/del", HelmStore.DeleteChart).
+		POST("/api/helmstore/chartfile/upload", HelmStore.UploadChartFile).
+		DELETE("/api/helmstore/chartfile/del", HelmStore.DeleteChartFile)
 }

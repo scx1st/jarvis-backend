@@ -21,4 +21,6 @@ const (
 	MaxIdleConns = 10               //最大空闲连接
 	MaxOpenConns = 100              //最大连接数
 	MaxLifeTime  = 30 * time.Second //最大生存时间
+	//helm上传路径
+	UploadPath = "D:\\client-config\\config\\upload"
 )
