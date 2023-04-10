@@ -7,6 +7,7 @@ import (
 	"jarvis-backend/config"
 	"jarvis-backend/controller"
 	"jarvis-backend/db"
+	"jarvis-backend/middle"
 	"jarvis-backend/service"
 	"net/http"
 	"os"
@@ -21,6 +22,9 @@ func main() {
 	db.Init()
 	//初始化 k8s client
 	service.K8s.Init()
+	//跨域中间件注册
+	r.Use(middle.Cors())
+	//r.Use(middle.JWTAuth())
 	// 初始化路由规则
 	controller.Router.InitApiRouter(r)
 	//启动task
