@@ -9,6 +9,7 @@ import (
 	"jarvis-backend/db"
 	"jarvis-backend/middle"
 	"jarvis-backend/service"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -30,6 +31,18 @@ func main() {
 	//启动task
 	go func() {
 		service.Event.WatchEventTask("Cluster-1")
+	}()
+	//websocket 启动
+	wsHandler := http.NewServeMux()
+	wsHandler.HandleFunc("/ws", service.Terminal.WsHandler)
+	ws := &http.Server{
+		Addr:    config.WsAddr,
+		Handler: wsHandler,
+	}
+	go func() {
+		if err := ws.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
 	}()
 	//gin server启动
 	srv := &http.Server{

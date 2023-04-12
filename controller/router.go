@@ -19,6 +19,10 @@ func (*router) InitApiRouter(r *gin.Engine) {
 			"data": nil,
 		})
 	}).
+		//登录验证
+		POST("/api/login", Login.Auth).
+		//集群
+		GET("/api/k8s/clusters", Cluster.GetClusters).
 		//pod操作
 		GET("/api/k8s/pods", Pod.GetPods).
 		GET("/api/k8s/pod/detail", Pod.GetPodDetail).
